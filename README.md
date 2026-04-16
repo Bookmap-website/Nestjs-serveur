@@ -15,7 +15,7 @@ To start everything nicely : npm run docker:start, npm run start:dev /or/ npm ru
 
 // this shouldn't work yet, but htere is other commands
 
-Migrate + seed the database : npm run db:renew
+Migrate + seed the database : npm run db:renew , npm run docker:start
 To start testing : npm run test:e2e 
 
 
