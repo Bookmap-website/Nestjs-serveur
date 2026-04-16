@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: nest
+    ports:
+      - '5555:5432'
+  db-test:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: adminTesting
+      POSTGRES_PASSWORD: adminTesting
+      POSTGRES_DB: nest
+    ports:
+      - '5556:5432'

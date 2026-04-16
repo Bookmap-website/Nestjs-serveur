@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid()) // a person can have multiple bookmark. each user is unique and a string as an id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email     String  @unique // email is unique in the database
+  hash      String  // hashed with argon
+  firstname String? // not obligated
+  lastname  String? // not obligated
+
+  bookmarks Bookmark[]
+
+  @@map("users") // name of the table in the database that will be used by Nestjs
+}
+
+model Bookmark {
+  id        String   @id @default(cuid()) // a person can have multiple bookmark. each bookmark is unique and a string as an id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title       String // a person can have multiple bookmark for a website, exemple : Wikipedia -> link : blahblah.wikipedia.com And Wikipedia -> link : blahblah2.wikipedia.com
+  description String? // not obligated if the title/link contains enough information
+  link        String // a person can have multiple bookmark for a website
+
+  userId String // is a Foreign_key
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade) // link the foreign key on userId in the Bookmark table to the id in the User table
+
+
+
+  @@map("bookmarks") // name of the table in the database that will be used by Nestjs
+}

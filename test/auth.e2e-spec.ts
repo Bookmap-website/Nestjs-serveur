@@ -1,0 +1,116 @@
+import { Test } from '@nestjs/testing';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { AppModule } from './../src/app.module';
+import request from 'supertest';
+
+describe('Auth (e2e)', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = moduleRef.createNestApplication();
+
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    );
+
+    await app.init();
+  });
+
+  /** auth/checkToken */
+  // Given authenticated user but expired token When request to /auth/checkToken Then return 401
+  // it('/auth/checkToken (GET - expired token)', async () => {
+  //   return request(app.getHttpServer())
+  //     .get('/auth/checkToken')
+  //     .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c')
+  //     .expect(401);
+  // })
+
+  /* Auth/signup */
+
+  // Given already created user When request to /auth/signup Then return 403
+  it('/auth/signup (POST)', async () => {
+    return request(app.getHttpServer())
+      .post('/auth/signup')
+      .send({
+        email: '7Vt7I@example.com',
+        password: '7Vt7I',
+      })
+      .expect(403);
+  });
+
+  // Given missing field password When request to /auth/signup Then return 400
+  it('/auth/signup (POST - missing fields)', async () => {
+    return request(app.getHttpServer())
+      .post('/auth/signup')
+      .send({
+        email: 'test@test.com',
+        // password missing
+      })
+      .expect(400);
+  });
+
+  // Given invalid email When request to /auth/signup Then return 400
+  it('/auth/signup (POST - invalid email)', async () => {
+    return request(app.getHttpServer())
+      .post('/auth/signup')
+      .send({
+        email: 'not-an-email',
+        password: 'validpassword',
+      })
+      .expect(400);
+  });
+
+  // Given invalid password When request to /auth/signup Then return 403
+  it('/auth/signin (POST - wrong password)', async () => {
+    return request(app.getHttpServer())
+      .post('/auth/signin')
+      .send({
+        email: 'test_subject@test.com',
+        password: 'wrongpassword',
+      })
+      .expect(403);
+  });
+
+  /* Auth/signin */
+
+  // Given valid user When request to /auth/signin Then return 200
+  it('/auth/signin (POST)', async () => {
+    return request(app.getHttpServer())
+      .post('/auth/signin')
+      .send({
+        email: 'test_subject@test.com',
+        password: 'test_subject',
+      })
+      .expect(200);
+  });
+
+  // Given invalid user When request to /auth/signin Then return 403
+  it('/auth/signin (POST)', async () => {
+    return request(app.getHttpServer())
+      .post('/auth/signin')
+      .send({
+        email: 'someone_not_there@example.com',
+        password: 'someone_not_there',
+      })
+      .expect(403);
+  });
+
+  /* Auth/profile */
+
+  // Given invalid route When request to /auth/profiles Then return 404
+  it('/auth/profiles (GET)', async () => {
+    return request(app.getHttpServer()).get('/auth/profiles').expect(404);
+  });
+
+  afterAll(async () => {
+    await app.close();
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  });
+});
