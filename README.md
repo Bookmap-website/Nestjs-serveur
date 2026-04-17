@@ -7,21 +7,23 @@ DATABASE_URL="[the_docker_url]"
 # JWT_SECRET="my_super_secret_key"
 JWT_SECRET="testing_password"
 
-// list of the commands necessary to run this bad boy
+// list of the commands necessary to run this bad boy for the first time
 
 of course : npm i
 
-To start everything nicely : npm run docker:start, npm run start:dev /or/ npm run start
+To start everything nicely for the first time : npm run docker:start, npm run start:dev /or/ npm run start
 
 // this shouldn't work yet, but htere is other commands
 
 Migrate + seed the database : npm run db:renew , npm run docker:start
+
+
+<!-- For the next times -->
+// once the server is setup for the first time, just run these commands in order
+npm run docker:start
+npm run start:dev /or/ npm run start
+
 To start testing : npm run test:e2e 
-
-
-
-
-
 
 <!-- Below this comment is what was in the ReadMe before i edited this project -->
 
