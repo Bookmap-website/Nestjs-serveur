@@ -1,32 +1,45 @@
 // 16-04-2026 - Oliver Nadeau
 // you will need to install nodejs and docker (latest version works i hope)
-// + the .env need to have 2 things to work : 
 
+
+
+<!-- list of the commands necessary to run this bad boy for the first time -->
+
+// install dependaencies
+npm i
+
+// create the .env file, in the root folder, with something like this inside :
 # Database(container) url from the docker (i use docker as db)
-DATABASE_URL="[the_docker_url]"
+DATABASE_URL="postgresql://adminTesting:adminTesting@localhost:5556/nest?schema=public"
 # JWT_SECRET="my_super_secret_key"
 JWT_SECRET="testing_password"
 
-// list of the commands necessary to run this bad boy for the first time
 
-of course : npm i
-
-To start everything nicely for the first time : npm run docker:start, npm run start:dev /or/ npm run start
-
-// this shouldn't work yet, but htere is other commands
-
-Migrate + seed the database : npm run db:renew , npm run docker:start
-
+To start everything nicely for the first time : 
+npm run docker:start
+npm run db:renew
+npx prisma studio
+npm run start:dev
 
 <!-- For the next times -->
+
 // once the server is setup for the first time, just run these commands in order
 npm run docker:start
 npm run start:dev /or/ npm run start
 
-To start testing : npm run test:e2e 
+// if you need to reset the docker server, just do :
+npm run docker:reboot
+
+// To start the various tests
+npm run test:e2e 
+
+
+
+
+
+
 
 <!-- Below this comment is what was in the ReadMe before i edited this project -->
-
 
 ## Description
 
