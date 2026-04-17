@@ -16,9 +16,10 @@ JWT_SECRET="testing_password"
 
 
 To start everything nicely for the first time : 
-npm run docker:start
+docker compose up -d
 npm run db:renew
 npx prisma studio
+// Open an other terminal for this one
 npm run start:dev
 
 <!-- For the next times -->
