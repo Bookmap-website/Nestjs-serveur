@@ -1,6 +1,8 @@
 // 16-04-2026 - Oliver Nadeau
 // you will need to install nodejs and docker (latest version works i hope)
 
+// if a command executes and you can't add other commands, just open a new terminal, 
+// by the end you should have 3 (2 locked in a process and one available for testing) !!!
 
 
 <!-- list of the commands necessary to run this bad boy for the first time -->
@@ -8,7 +10,7 @@
 // install dependaencies
 npm i
 
-// create the .env file, in the root folder, with something like this inside :
+// create the .env file, in the root folder, with something like this inside (command : docker ps -> should tell you if docker is enabled) :
 # Database(container) url from the docker (i use docker as db)
 DATABASE_URL="postgresql://adminTesting:adminTesting@localhost:5556/nest?schema=public"
 # JWT_SECRET="my_super_secret_key"
@@ -25,6 +27,7 @@ npm run start:dev
 <!-- For the next times -->
 
 // once the server is setup for the first time, just run these commands in order
+// there should be somme errors with the prisma_studio pipeline, how
 npm run docker:start
 npm run start:dev /or/ npm run start
 
