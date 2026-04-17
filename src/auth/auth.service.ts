@@ -49,7 +49,7 @@ export class AuthService {
         },
       });
 
-      return { access_token: await this.signToken(user.id, user.email) };
+      return await this.signToken(user.id, user.email);
     } catch (error) {
       throw new ForbiddenException('Invalid Crendentials');
     }

@@ -2,6 +2,7 @@ import { Test } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from './../src/app.module';
 import request from 'supertest';
+import { PrismaService } from '../src/prisma/prisma.service';
 
 describe('Auth (e2e)', () => {
   let app: INestApplication;
@@ -34,8 +35,31 @@ describe('Auth (e2e)', () => {
 
   /* Auth/signup */
 
-  // Given already created user When request to /auth/signup Then return 403
+  // Given valid inputs When request to /auth/signup Then return 201
+
   it('/auth/signup (POST)', async () => {
+    const email = '7Vt7I_testing_subject@example.com';
+
+    const prisma = app.get(PrismaService);
+
+    try {
+      await request(app.getHttpServer())
+        .post('/auth/signup')
+        .send({
+          email,
+          password: '7Vt7I',
+        })
+        .expect(200);
+
+    } finally {
+      await prisma.user.deleteMany({
+        where: { email },
+      });
+    }
+  });
+
+  // Given already created user When request to /auth/signup Then return 403
+  it('/auth/signup (POST - already created user)', async () => {
     return request(app.getHttpServer())
       .post('/auth/signup')
       .send({
