@@ -268,6 +268,41 @@ describe('Bookmark (e2e)', () => {
       .expect(401);
   });
 
+  // Given authenticated user When request is only modifying title Then return 200
+  it('/bookmark/editBookmarkById/:id (PATCH - only title)', async () => {
+    const token = await login_function_reusable(
+      'test_subject@test.com',
+      'test_subject',
+    );
+
+    const createResponse = await request(app.getHttpServer())
+      .post('/bookmark/createBookmark')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        title: 'Google',
+        description: 'Search Engine',
+        link: 'https://www.google.com',
+      })
+      .expect(200);
+
+    const bookmarkId = createResponse.body.id;
+
+    return request(app.getHttpServer())
+      .patch('/bookmark/editBookmarkById/' + bookmarkId)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        title: 'Google_modified',
+      })
+      .expect(200)
+      .then((response) => {
+        // 3. Assertions
+        expect(response.body.id).toEqual(bookmarkId);
+        expect(response.body.title).toEqual('Google_modified');
+        expect(response.body.description).toEqual('Search Engine');
+        expect(response.body.link).toEqual('https://www.google.com');
+      });
+  })
+
   /* /bookmark/deleteBookmarkById/:id */
   // Given Authenticated user and a brand new bookmark When request to /bookmark/deleteBookmarkById/:id Then return 200 and deletes the bookmark created
   it('/bookmark/deleteBookmarkById/:id (DELETE)', async () => {
