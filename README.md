@@ -7,7 +7,7 @@
 
 <!-- list of the commands necessary to run this bad boy for the first time -->
 
-// install dependaencies
+// install dependencies
 npm i
 
 // create the .env file, in the root folder, with something like this inside (command : docker ps -> should tell you if docker is enabled) :
