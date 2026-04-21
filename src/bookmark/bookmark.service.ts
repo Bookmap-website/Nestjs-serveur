@@ -61,4 +61,12 @@ export class BookmarkService {
 
     return { message: 'Bookmark deleted successfully' };
   }
+
+  async nbrBookmarks_service(userId: string) {
+    const count = await this.prisma.bookmark.count({
+      where: { userId },
+    });
+
+    return count;
+  }
 }

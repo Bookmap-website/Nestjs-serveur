@@ -37,4 +37,9 @@ export class BookmarkController {
     deleteBookmarkById(@GetUser('id') userId : string, @Param('id') bookmarkId : string) {
         return this.bookmarkService.deleteBookmarkById_service(userId, bookmarkId);
     }
+
+    @Get('nbrBookmarks')
+    nbrBookmarks(@GetUser('id') userId : string) {
+        return this.bookmarkService.nbrBookmarks_service(userId);
+    }
 }

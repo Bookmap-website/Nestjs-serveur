@@ -377,6 +377,34 @@ describe('Bookmark (e2e)', () => {
       .expect(404);
   });
 
+  /* nbrBookmarks */
+
+  // Given authenticated user When request to /bookmark/nbrBookmarks Then return 200 and the number of bookmarks of the user
+  it('/bookmark/nbrBookmarks (GET)', async () => {
+    const token = await login_function_reusable(
+      'test_subject@test.com',
+      'test_subject',
+    );
+
+    const createResponse = await request(app.getHttpServer())
+      .post('/bookmark/createBookmark')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        title: 'Test Bookmark',
+        description: 'Test Description',
+        link: 'https://www.test.com',
+      })
+      .expect(200);
+
+    return request(app.getHttpServer())
+      .get('/bookmark/nbrBookmarks')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200)
+      .then((response) => {
+        expect(response.body).toEqual(1);
+      });
+  });
+
   /* ***************************
     End of the tests
   *************************** */
