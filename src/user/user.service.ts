@@ -23,4 +23,14 @@ export class UserService {
       data: body_request,
     });
   }
+
+  // need to get the boolean to know if the user is admin
+  async getStats_service(user: User) {
+    // returns only the user's HttpStatus
+    const foundUser = await this.prisma.user.findUnique({
+      where: { id: user.id },
+      select: { isAdmin: true },
+    });
+    return foundUser;
+  }
 }

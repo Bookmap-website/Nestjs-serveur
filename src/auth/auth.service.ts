@@ -3,12 +3,14 @@ import { AuthDto } from './dto/auth.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
+import { AdminLogsService } from '../adminlogs/adminLogs.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwt: JwtService,
+    private adminLogsService: AdminLogsService,
   ) {}
 
   // sign token
@@ -34,14 +36,16 @@ export class AuthService {
   async signup(requestdto: AuthDto) {
     // generate password hash
     const hash = await argon2.hash(requestdto.password);
+
     // save new user in db
     try {
       const user = await this.prisma.user.create({
         data: {
           email: requestdto.email,
           hash: hash,
+          isAdmin: false,
         },
-        // retourne seulement c'est champs
+        // return only these fields
         select: {
           id: true,
           email: true,
@@ -51,6 +55,12 @@ export class AuthService {
 
       return await this.signToken(user.id, user.email);
     } catch (error) {
+      // LOG ONLY FAILURE
+      await this.adminLogsService.createLog({
+        action_made: `AUTH.SIGNUP_FAILED | email=${requestdto.email}`,
+        userId: 'unknown',
+      });
+
       throw new ForbiddenException('Invalid Crendentials');
     }
   }
@@ -59,11 +69,17 @@ export class AuthService {
   async signin(dto: AuthDto) {
     // look up user by email
     const user = await this.prisma.user.findUnique({
-      where: { email: dto.email},
+      where: { email: dto.email },
     });
 
     // if nobody found, throw exception
     if (!user) {
+      // LOG FAILURE
+      await this.adminLogsService.createLog({
+        action_made: `AUTH.SIGNIN_FAILED_USER_NOT_FOUND | email=${dto.email}`,
+        userId: 'unknown',
+      });
+
       throw new ForbiddenException('Invalid credentials');
     }
 
@@ -72,18 +88,20 @@ export class AuthService {
 
     // if they don't match, throw exception
     if (!pwMatches) {
+      // LOG FAILURE
+      await this.adminLogsService.createLog({
+        action_made: `AUTH.SIGNIN_FAILED_WRONG_PASSWORD | userId=${user.id}`,
+        userId: user.id,
+      });
+
       throw new ForbiddenException('Invalid credentials');
     }
-
-    // return the user filtered without the hash
-    // const { hash, ...userWithoutPassword } = user;
 
     // return the JWT token
     return await this.signToken(user.id, user.email);
   }
 
   // Checls token
-
   async checkToken() {
     return { message: 'ok' };
   }

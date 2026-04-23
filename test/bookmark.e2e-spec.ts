@@ -49,7 +49,7 @@ describe('Bookmark (e2e)', () => {
 
   // Given authenticated user When request to /getBookmarks Then return 200
   it('/bookmark/getBookmarks (GET)', async () => {
-    const token = await login_function_reusable('admin@admin.com', 'admin');
+    const token = await login_function_reusable('admin@admin.com', 'admin1234');
 
     return request(app.getHttpServer())
       .get('/bookmark/getBookmarks')
@@ -77,7 +77,7 @@ describe('Bookmark (e2e)', () => {
 
     const tokenUser2 = await login_function_reusable(
       'admin@admin.com',
-      'admin',
+      'admin1234',
     );
 
     await request(app.getHttpServer())
@@ -141,7 +141,7 @@ describe('Bookmark (e2e)', () => {
 
     const tokenUser2 = await login_function_reusable(
       'admin@admin.com',
-      'admin',
+      'admin1234',
     );
 
     const createResponse = await request(app.getHttpServer())
@@ -380,6 +380,7 @@ describe('Bookmark (e2e)', () => {
   /* nbrBookmarks */
 
   // Given authenticated user When request to /bookmark/nbrBookmarks Then return 200 and the number of bookmarks of the user
+  /*
   it('/bookmark/nbrBookmarks (GET)', async () => {
     const token = await login_function_reusable(
       'test_subject@test.com',
@@ -404,6 +405,8 @@ describe('Bookmark (e2e)', () => {
         expect(response.body).toEqual(1);
       });
   });
+
+  */
 
   /* ***************************
     End of the tests

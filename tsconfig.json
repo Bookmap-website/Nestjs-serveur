@@ -25,6 +25,8 @@
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
 
+    "strictPropertyInitialization": false,
+
     "skipLibCheck": true,
     "types": ["node", "jest"],
   }

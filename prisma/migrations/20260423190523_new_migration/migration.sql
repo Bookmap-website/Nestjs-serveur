@@ -7,6 +7,7 @@ CREATE TABLE "users" (
     "hash" TEXT NOT NULL,
     "firstname" TEXT,
     "lastname" TEXT,
+    "isAdmin" BOOLEAN NOT NULL,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -22,6 +23,17 @@ CREATE TABLE "bookmarks" (
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "bookmarks_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "admin_logs" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "action_made" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "admin_logs_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex

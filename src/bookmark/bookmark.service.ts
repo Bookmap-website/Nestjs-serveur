@@ -2,14 +2,21 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBookmarkDto } from './dto/createBookmark.dto';
 import { EditBookmarkDto } from './dto/editBookmark.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { AdminLogsService } from '../adminlogs/adminLogs.service';
 
 @Injectable()
 export class BookmarkService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private adminLogsService: AdminLogsService,
+  ) {}
+
+  // GET ALL
   getBookmarks_service(userId: string) {
     return this.prisma.bookmark.findMany({ where: { userId } });
   }
 
+  // GET ONE
   async getBookmarkById_service(userId: string, bookmarkId: string) {
     const bookmark = await this.prisma.bookmark.findUnique({
       where: { id: bookmarkId },
@@ -22,12 +29,24 @@ export class BookmarkService {
     return bookmark;
   }
 
-  createBookmark_service(userId: string, dto: CreateBookmarkDto) {
-    return this.prisma.bookmark.create({
-      data: { ...dto, user: { connect: { id: userId } } },
+  // CREATE
+  async createBookmark_service(userId: string, dto: CreateBookmarkDto) {
+    const bookmark = await this.prisma.bookmark.create({
+      data: {
+        ...dto,
+        user: { connect: { id: userId } },
+      },
     });
+
+    await this.adminLogsService.createLog({
+      action_made: 'Bookmark - CREATED with the id: ' + bookmark.id,
+      userId,
+    });
+
+    return bookmark;
   }
 
+  // UPDATE
   async editBookmarkById_service(
     userId: string,
     dto: EditBookmarkDto,
@@ -41,17 +60,25 @@ export class BookmarkService {
       throw new NotFoundException('Bookmark not found');
     }
 
-    return this.prisma.bookmark.update({
+    const updated = await this.prisma.bookmark.update({
       where: { id: bookmarkId },
       data: dto,
     });
+
+    await this.adminLogsService.createLog({
+      action_made: 'Bookmark - UPDATED with the id: ' + bookmark.id,
+      userId,
+    });
+
+    return updated;
   }
 
+  // DELETE
   async deleteBookmarkById_service(userId: string, bookmarkId: string) {
     const deleted = await this.prisma.bookmark.deleteMany({
       where: {
         id: bookmarkId,
-        userId: userId,
+        userId,
       },
     });
 
@@ -59,14 +86,18 @@ export class BookmarkService {
       throw new NotFoundException('Bookmark not found');
     }
 
+    await this.adminLogsService.createLog({
+      action_made: 'Bookmark - DELETED with the id: ' + bookmarkId,
+      userId,
+    });
+
     return { message: 'Bookmark deleted successfully' };
   }
 
+  // Gives the number of bookmarks of a user (typically the connected user)
   async nbrBookmarks_service(userId: string) {
-    const count = await this.prisma.bookmark.count({
+    return this.prisma.bookmark.count({
       where: { userId },
     });
-
-    return count;
   }
 }

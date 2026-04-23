@@ -15,6 +15,7 @@ model User {
   hash      String  // hashed with argon
   firstname String? // not obligated
   lastname  String? // not obligated
+  isAdmin   Boolean
 
   bookmarks Bookmark[]
 
@@ -36,4 +37,15 @@ model Bookmark {
 
 
   @@map("bookmarks") // name of the table in the database that will be used by Nestjs
+}
+
+model AdminLogs {
+  id String    @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  action_made String
+  userId String // all logs should stay as they are created, even if the user is deleted the log should still be there
+
+  @@map("admin_logs")
 }

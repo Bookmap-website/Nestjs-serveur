@@ -18,6 +18,11 @@ export class UserController {
     return this.userService.getMe_service(user);
   }
 
+  @Get('whoami')
+  getMyStats(@GetUser() user: User) {
+    return this.userService.getStats_service(user);
+  }
+
   @Patch('update')
   updateUser(@GetUser() user: User, @Body() body_request: UserDto) {
     return this.userService.updateUser_service(user.id, body_request);

@@ -6,6 +6,7 @@ import { PrismaService } from '../src/prisma/prisma.service';
 
 describe('Auth (e2e)', () => {
   let app: INestApplication;
+  let prisma: PrismaService;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -13,6 +14,7 @@ describe('Auth (e2e)', () => {
     }).compile();
 
     app = moduleRef.createNestApplication();
+    prisma = app.get(PrismaService);
 
     app.useGlobalPipes(
       new ValidationPipe({
@@ -29,9 +31,12 @@ describe('Auth (e2e)', () => {
   // it('/auth/checkToken (GET - expired token)', async () => {
   //   return request(app.getHttpServer())
   //     .get('/auth/checkToken')
-  //     .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c')
+  //     .set(
+  //       'Authorization',
+  //       'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.fake.token',
+  //     )
   //     .expect(401);
-  // })
+  // });
 
   /* Auth/signup */
 
@@ -40,14 +45,12 @@ describe('Auth (e2e)', () => {
   it('/auth/signup (POST)', async () => {
     const email = '7Vt7I_testing_subject@example.com';
 
-    const prisma = app.get(PrismaService);
-
     try {
       await request(app.getHttpServer())
         .post('/auth/signup')
         .send({
           email,
-          password: '7Vt7I',
+          password: '7Vt7I1234', // FIX: trop court avant
         })
         .expect(200);
 
@@ -64,7 +67,7 @@ describe('Auth (e2e)', () => {
       .post('/auth/signup')
       .send({
         email: '7Vt7I@example.com',
-        password: '7Vt7I',
+        password: '7Vt7I1234',
       })
       .expect(403);
   });
@@ -75,7 +78,6 @@ describe('Auth (e2e)', () => {
       .post('/auth/signup')
       .send({
         email: 'test@test.com',
-        // password missing
       })
       .expect(400);
   });
@@ -86,7 +88,7 @@ describe('Auth (e2e)', () => {
       .post('/auth/signup')
       .send({
         email: 'not-an-email',
-        password: 'validpassword',
+        password: 'validpassword1234',
       })
       .expect(400);
   });
@@ -116,7 +118,7 @@ describe('Auth (e2e)', () => {
   });
 
   // Given invalid user When request to /auth/signin Then return 403
-  it('/auth/signin (POST)', async () => {
+  it('/auth/signin (POST - user not found)', async () => {
     return request(app.getHttpServer())
       .post('/auth/signin')
       .send({
@@ -130,11 +132,19 @@ describe('Auth (e2e)', () => {
 
   // Given invalid route When request to /auth/profiles Then return 404
   it('/auth/profiles (GET)', async () => {
-    return request(app.getHttpServer()).get('/auth/profiles').expect(404);
+    return request(app.getHttpServer())
+      .get('/auth/profiles')
+      .expect(404);
   });
 
   afterAll(async () => {
+    await prisma.user.deleteMany({
+      where: { email: '7Vt7I_testing_subject@example.com' },
+    });
+
     await app.close();
+
+    // FIX: évite les workers bloqués (E2E leak fix)
     await new Promise((resolve) => setTimeout(resolve, 500));
   });
 });

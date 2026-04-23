@@ -8,19 +8,23 @@ export async function seedUsers(prisma: PrismaClient) {
       {
         email: '7Vt7I@example.com',
         hash: await argon2.hash('7Vt7I'),
+        isAdmin: false,
       },
       {
         email: 'LzI8o@example.com',
         hash: await argon2.hash('LzI8o'),
+        isAdmin: false,
       },
       {
         email: 'admin@admin.com',
-        hash: await argon2.hash('admin'),
+        hash: await argon2.hash('admin1234'),
+        isAdmin: true,
       },
       {
         id: '1',
         email: 'test_subject@test.com',
         hash: await argon2.hash('test_subject'),
+        isAdmin: false,
       },
     ],
   });
