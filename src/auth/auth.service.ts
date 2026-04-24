@@ -57,7 +57,7 @@ export class AuthService {
     } catch (error) {
       // LOG ONLY FAILURE
       await this.adminLogsService.createLog({
-        action_made: `AUTH.SIGNUP_FAILED | email=${requestdto.email}`,
+        action_made: `AUTH - SIGNUP_FAILED | email=${requestdto.email}` + ' | Date: ' + new Date().toLocaleString(),
         userId: 'unknown',
       });
 
@@ -76,7 +76,7 @@ export class AuthService {
     if (!user) {
       // LOG FAILURE
       await this.adminLogsService.createLog({
-        action_made: `AUTH.SIGNIN_FAILED_USER_NOT_FOUND | email=${dto.email}`,
+        action_made: `AUTH - SIGNIN_FAILED_USER_NOT_FOUND | email=${dto.email}` + ' | Date: ' + new Date().toLocaleString(),
         userId: 'unknown',
       });
 
@@ -90,7 +90,7 @@ export class AuthService {
     if (!pwMatches) {
       // LOG FAILURE
       await this.adminLogsService.createLog({
-        action_made: `AUTH.SIGNIN_FAILED_WRONG_PASSWORD | userId=${user.id}`,
+        action_made: `AUTH - SIGNIN_FAILED_WRONG_PASSWORD | userId=${user.id}` + ' | Date: ' + new Date().toLocaleString(),
         userId: user.id,
       });
 

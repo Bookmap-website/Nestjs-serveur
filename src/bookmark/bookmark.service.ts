@@ -39,7 +39,11 @@ export class BookmarkService {
     });
 
     await this.adminLogsService.createLog({
-      action_made: 'Bookmark - CREATED with the id: ' + bookmark.id,
+      action_made:
+        'Bookmark - CREATED | id: ' +
+        bookmark.id +
+        ' | Date: ' +
+        new Date().toLocaleString(),
       userId,
     });
 
@@ -66,7 +70,7 @@ export class BookmarkService {
     });
 
     await this.adminLogsService.createLog({
-      action_made: 'Bookmark - UPDATED with the id: ' + bookmark.id,
+      action_made: 'Bookmark - UPDATED | id: ' + bookmark.id + ' | Date: ' + new Date().toLocaleString(),
       userId,
     });
 
@@ -87,7 +91,7 @@ export class BookmarkService {
     }
 
     await this.adminLogsService.createLog({
-      action_made: 'Bookmark - DELETED with the id: ' + bookmarkId,
+      action_made: 'Bookmark - DELETED | id: ' + bookmarkId + ' | Date: ' + new Date().toLocaleString(),
       userId,
     });
 

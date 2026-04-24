@@ -11,6 +11,7 @@ export class AdminLogsService {
       orderBy: {
         createdAt: 'desc',
       },
+      take: 50,
     });
   }
 
