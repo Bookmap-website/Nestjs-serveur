@@ -8,6 +8,7 @@
   "scripts": {
     "docker:start": "docker compose up -d && npx prisma studio",
     "docker:reboot": "docker compose restart && npx prisma studio",
+    "docker:hardreset": "docker compose down -v && docker compose up -d && npm run db:renew && npx prisma studio",
     "db:renew": "npx prisma migrate reset && npx prisma generate && npx prisma migrate dev --name new_migration && npm run db:seed",
     "db:change": "npm run docker:reboot && npm run db:renew",
     "db:seed": "npx prisma db seed",

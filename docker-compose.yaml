@@ -10,8 +10,8 @@ services:
   db-test:
     image: postgres:13
     environment:
-      POSTGRES_USER: adminTesting
-      POSTGRES_PASSWORD: adminTesting
-      POSTGRES_DB: nest
+      POSTGRES_USER: ${POSTGRES_USER_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_DB}
+      POSTGRES_DB: ${POSTGRES_DB_NAME}
     ports:
-      - '5556:5432'
+      - '${POSTGRES_PORT}:5432'
